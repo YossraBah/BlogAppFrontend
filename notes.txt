@@ -1,0 +1,140 @@
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import {fetchBlogs, deleteBlog} from '../features/blogSlice'
+import BlogCard from "./BlogCard";
+
+const Blogs = () => {
+  const dispatch = useDispatch()
+  const blogState = useSelector((state)=> state.blog)
+
+  const handleDelete=(id) =>{
+    dispatch(deleteBlog(id))
+  }
+
+  useEffect(()=>{
+    dispatch(fetchBlogs())
+  },[dispatch]) 
+
+  if(blogState.status ==='pending'){
+    return <div>loading...</div>
+  }
+  if(blogState.status ==='rejected'){
+    return <div>{blogState.error}</div>
+  }
+
+  return (
+    <div className="flex flex-wrap gap-2 justify-center">
+     { blogState.blogs.map((blog)=>{
+      return <>
+        <BlogCard key={blog._id} imageLink={blog.imageLink} blogTitle={blog.blogTitle} blogDescription={blog.blogDescription} blogLink={blog.blogLink} />
+        <button onClick={handleDelete(blog._id)} key={blog._id}><ion-icon name="trash-outline"></ion-icon></button>
+      </>
+    })}
+    </div>
+  );
+};
+
+export default Blogs;
+
+*****************************
+
+import React, { useEffect } from "react";
+ import BlogCard from "./BlogCard";
+import { useSelector, useDispatch } from "react-redux";
+import {fetchBlogs} from '../features/blogSlice'
+
+const Blogs = () => {
+  const dispatch = useDispatch()
+  const blogState = useSelector((state)=> state.blog)
+
+  useEffect(()=>{
+    dispatch(fetchBlogs())
+  },[dispatch]) 
+
+  if(blogState.status ==='pending'){
+    return <div>loading...</div>
+  }
+  if(blogState.status ==='rejected'){
+    return <div>{blogState.error}</div>
+  }
+  return (
+    <div className="flex flex-wrap gap-2 justify-center">
+     { blogState.blogs.map((blog)=>{
+      return <BlogCard key={blog._id} imageLink={blog.imageLink} blogTitle={blog.blogTitle} blogDescription={blog.blogDescription} blogLink={blog.blogLink} />
+     })}
+    </div>
+  );
+};
+
+export default Blogs;
+
+********************
+
+
+https://fonts.google.com/specimen/Roboto+Slab
+
+
+
+****************************
+
+import React from "react";
+import * as Yup from "yup";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+
+const BlogForm = (props) => {
+const validationSchema = Yup.object().shape({
+	blogTitle: Yup.string().required("Required"),
+	imageLink: Yup.string().required("Required"),
+	blogDescription: Yup.string().required("Required"),
+	blogLink: Yup.string().required("Required"),
+});
+console.log(props);
+return (
+	<div className="flex flex-col">
+	<Formik {...props} validationSchema={validationSchema}>
+		<Form>
+		<div className="flex flex-col">
+			<Field name="blogTitle" type="text"/>
+			<ErrorMessage
+			name="name"
+			className="text-red-500"
+			/>
+		</div>
+		<div>
+			<Field name="imageLink" type="text"/>
+			<ErrorMessage
+			name="email"
+			className="text-red-500"
+			/>
+		</div>
+		<div>
+        <Field name="blogDescription" type="text"/>
+			<ErrorMessage
+			name="email"
+			className="text-red-500"
+			/>
+		</div>
+        <div>
+        <Field name="blogDescription" type="text"/>
+			<ErrorMessage
+			name="email"
+			className="text-red-500"
+			/>
+		</div>
+        <div>
+        <Field name="blogLink" type="text"/>
+			<ErrorMessage
+			name="email"
+			className="text-red-500"
+			/>
+		</div>
+		<button type="submit">
+			{props.children}
+		</button>
+		</Form>
+	</Formik>
+	</div>
+);
+};
+
+export default BlogForm;
